@@ -1,6 +1,7 @@
 import { Db, MongoClient } from 'mongodb';
 
 const uri = process.env.MONGODB_URI;
+const dbName = process.env.MONGODB_DB;
 let client: MongoClient;
 let db: Db;
 
@@ -11,7 +12,7 @@ export async function connectToDatabase() {
     if (!client) {
         client = new MongoClient(uri);
         await client.connect();
-        db = client.db(process.env.MONGODB_DB);
+        db = client.db(dbName);
     }
 
     return { client, db };

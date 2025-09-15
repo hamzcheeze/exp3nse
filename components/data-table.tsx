@@ -1,10 +1,6 @@
 "use client";
 
-import {
-    useState,
-    useEffect,
-    useMemo
-} from "react";
+import { useState, useEffect } from "react";
 import {
     Table,
     TableHeader,
@@ -12,7 +8,6 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Pagination,
     getKeyValue,
     Skeleton,
 } from "@heroui/react";
@@ -62,14 +57,6 @@ const getExpensesData = async (): Promise<Expense[]> => {
 export default function TableData() {
     const [expenses, setExpenses] = useState<Expense[]>([])
     const [isLoading, setIsLoading] = useState(true);
-    const [page, setPage] = useState(1);
-    const rowsPerPage = 20;
-    const pages = Math.ceil(expenses.length / rowsPerPage);
-    const items = useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        return expenses.slice(start, end);
-    }, [page, expenses]);
 
     useEffect(() => {
         const loadExpenses = async () => {
@@ -87,42 +74,26 @@ export default function TableData() {
     }, [])
 
     return (
-        <Table
-            aria-label="Expense Table"
-            bottomContent={
-                <div className="flex w-full justify-center">
-                    <Pagination
-                        isCompact
-                        showControls
-                        showShadow
-                        color="primary"
-                        page={page}
-                        total={pages}
-                        onChange={(page) => setPage(page)}
-                    />
-                </div>
-            }
-            classNames={{
-                wrapper: "min-h-[222px]",
-            }}
-        >
+        <Table aria-label="Expense Table">
             <TableHeader>
                 <TableColumn>Date</TableColumn>
                 <TableColumn>Name</TableColumn>
                 <TableColumn>Amount</TableColumn>
                 <TableColumn>Channel</TableColumn>
             </TableHeader>
-            <TableBody items={items}>
+            <TableBody>
                 {isLoading ? (
                     renderSkeleton()
-                ) : ((item => (
-                    <TableRow key={item._id.toString()}>
-                        <TableCell>{item.date}</TableCell>
-                        <TableCell>{item.name}</TableCell>
-                        <TableCell>{item.amount}</TableCell>
-                        <TableCell>{item.channel}</TableCell>
-                    </TableRow>
-                )))}
+                ) : (
+                    expenses.map((item) => (
+                        <TableRow key={item._id.toString()}>
+                            <TableCell>{item.date}</TableCell>
+                            <TableCell>{item.name}</TableCell>
+                            <TableCell>{item.amount}</TableCell>
+                            <TableCell>{item.channel}</TableCell>
+                        </TableRow>
+                    ))
+                )}
             </TableBody>
         </Table>
     );
